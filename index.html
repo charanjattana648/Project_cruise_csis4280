@@ -1,0 +1,59 @@
+<html>
+    <head>
+          <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+      crossorigin="anonymous"></script>
+      <script>
+         $(document).ready(function() {
+          $("#login_btn").click(()=>{
+            $.ajax({
+                  url:document.URL+"login",
+                  type:"POST",
+                  success: display,
+                  data: {
+                        email: $("#email_login").val() ,
+                        psw: $("#password_login").val()
+                    }
+                  })
+          })
+            $("#signUp_btn").click(()=>{
+              $.ajax({
+                  url:document.URL+"signUp",
+                  type:"POST",
+                  success: display,
+                  data: {
+                        firstName: $("#firstName").val() ,
+                        lastName: $("#lastName").val(),
+                        email: $("#email_login").val() ,
+                        psw: $("#password_login").val()
+                    }
+                  })
+          })
+          function display(resfromServer)
+          {
+              var res=resfromServer.split(":");
+              console.log(res[1]);
+          }
+         })
+      </script>
+    </head>
+    <body>
+        <h1>Hello World</h1>
+        <div>
+            <hr>
+             <for label="firstName">FirstName: </for>
+            <input type="text" id="firstName"/><br>
+            <for label="lastName">LastName: </for>
+            <input type="text" id="lastName"/><br>
+            <for label="email_login">Email: </for>
+            <input type="email" id="email_login"/><br>
+            <for label="password_login">Password: </for>
+            <input type="password" id="password_login"/><br>
+            <input type="button" id="login_btn" value="Login"/><br>
+            <input type="button" id="signUp_btn" value="SignUp"/>
+            <hr>
+        </div>
+       
+    </body>
+</html>
