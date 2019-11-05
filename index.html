@@ -30,10 +30,42 @@
                     }
                   })
           })
+          $("#cruiseData_btn").click(()=>{
+              $.ajax({
+                  url:document.URL+"cruiseList",
+                  type:"POST",
+                  success:displayCruiseList,
+                  data:{}
+                  
+                  })
+          })
           function display(resfromServer)
           {
               var res=resfromServer.split(":");
               console.log(res[1]);
+          }
+          function displayCruiseList(res)
+          {
+              var cruiseArr=JSON.parse(res);
+              var result="";
+            //   for(var i=0;i<cruiseArr.length;i++)
+            //   {
+            //       result="CompanyName : "+cruiseArr[i]['CompanyName']+"<br>"+
+            //       "CruiseName : "+cruiseArr[i]['CruiseName']+"<br>";
+            //   }
+               cruiseArr.forEach(function(cruise)
+              {
+                  result="CompanyName : "+cruise['CompanyName']+"<br>"+
+                  "CruiseName : "+cruise.CruiseName+"<br>";
+                  cruise.Departs_from.forEach(function(cd)
+              {
+                  result+=cd+"<br>";
+              })
+               $("#cruise_img").attr("src",cruise['CruiseImage'])
+              })
+             
+              $("#cruise_list").html(result);
+              
           }
          })
       </script>
@@ -52,8 +84,12 @@
             <input type="password" id="password_login"/><br>
             <input type="button" id="login_btn" value="Login"/><br>
             <input type="button" id="signUp_btn" value="SignUp"/>
+             <input type="button" id="cruiseData_btn" value="Get Cruise List"/>
             <hr>
         </div>
+        
+        <h3 id="cruise_list"></h3>
+        <img id="cruise_img" src="" style="height:250px;width:250px;"></img>
        
     </body>
 </html>
