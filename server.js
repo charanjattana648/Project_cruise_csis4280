@@ -3,6 +3,7 @@ var fs=require("fs");
 var express=require("express");
 var bodyParser=require("body-parser");
 var auth=require("./auth.js");
+var mongodb=require("./Mongodb.js");
 
 var app=express();
 var port=8000;
@@ -25,4 +26,9 @@ app.post("/signUp",function(req,res)
 {
     console.log("Entered for signup")
     auth.signUp(req,res);
+})
+app.post("/cruiseList",function(req,res)
+{
+    console.log("Entered for cruise List");
+    mongodb.getCruiseList(req,res);
 })
