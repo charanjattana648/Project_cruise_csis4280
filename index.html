@@ -6,6 +6,7 @@
       crossorigin="anonymous"></script>
       <script>
          $(document).ready(function() {
+             $("#cruise_img").hide();
           $("#login_btn").click(()=>{
             $.ajax({
                   url:document.URL+"login",
@@ -39,6 +40,38 @@
                   
                   })
           })
+          
+             $("#cruiseNames_btn").click(()=>{
+              $.ajax({
+                  url:document.URL+"cruiseNameList",
+                  type:"POST",
+                  success:displayCruiseDestList,
+                  data:{}
+                  })
+          })
+          
+            $("#days_btn").click(()=>{
+              $.ajax({
+                  url:document.URL+"daysList",
+                  type:"POST",
+                  success:displayCruiseDestList,
+                  data:{
+                      cruiseDestination:"Eastern Caribbean"
+                  }
+                  
+                  })
+          })
+          $("#dests_btn").click(()=>{
+              $.ajax({
+                  url:document.URL+"cruiseDestList",
+                  type:"POST",
+                  success:displayCruiseDestList,
+                  data:{
+                      cruiseName:"Carnival Breeze"
+                  }
+                  
+                  })
+          })
           function display(resfromServer)
           {
               var res=resfromServer.split(":");
@@ -46,25 +79,66 @@
           }
           function displayCruiseList(res)
           {
-              var cruiseArr=JSON.parse(res);
+              $("#cruise_img").show();
+              var result=res.split("@:");
+              var cruise_list="";
+              if(result.length==2)
+              {
+                    cruise_list=result[1];
+              }
+              var cruiseArr=JSON.parse(cruise_list);
               var result="";
-            //   for(var i=0;i<cruiseArr.length;i++)
-            //   {
-            //       result="CompanyName : "+cruiseArr[i]['CompanyName']+"<br>"+
-            //       "CruiseName : "+cruiseArr[i]['CruiseName']+"<br>";
-            //   }
                cruiseArr.forEach(function(cruise)
               {
                   result="CompanyName : "+cruise['CompanyName']+"<br>"+
                   "CruiseName : "+cruise.CruiseName+"<br>";
+ 
+                  if(typeof cruise.Departs_from!="undefined")
+                  {
                   cruise.Departs_from.forEach(function(cd)
               {
                   result+=cd+"<br>";
               })
+                  }
                $("#cruise_img").attr("src",cruise['CruiseImage'])
+               
+               var h = $('<h3 id="dynamic_heading">'); 
+               h.html(cruise.CruiseName);
+                var p = $('<p id="dynamic_p">'); 
+                p.html(result);
+               var img = $('<img id="dynamic">'); 
+               img.attr('src', cruise['CruiseImage']);
+               img.attr('height', "400px");
+               img.attr('width', "400px");
+               
+               h.appendTo('#listCruiseImage');
+               img.appendTo('#listCruiseImage');
+               p.appendTo("#listCruiseData")
               })
-             
               $("#cruise_list").html(result);
+              
+          }
+          
+          function displayCruiseDestList(res){
+              var filter=res.split("@:");
+              var data=filter[1].split(",");
+              var names="";
+              data.forEach((d)=>{
+                  names+=d+"<br>";
+              })
+               $("#cruise_list").html(names);
+              
+          }
+         
+         
+          function displayCruiseName(res){
+              var filter=res.split("@:");
+              var data=filter[1].split(",");
+              var names="";
+              data.forEach((d)=>{
+                  names+=d+"<br>";
+              })
+               $("#cruise_list").html(names);
               
           }
          })
@@ -85,9 +159,15 @@
             <input type="button" id="login_btn" value="Login"/><br>
             <input type="button" id="signUp_btn" value="SignUp"/>
              <input type="button" id="cruiseData_btn" value="Get Cruise List"/>
+             <input type="button" id="cruiseNames_btn" value="Get Cruise Name"/>
+             <input type="button" id="dests_btn" value="Get Destinations"/>
+             <input type="button" id="days_btn" value="Get Days"/>
             <hr>
         </div>
-        
+        <div>
+        <div id="listCruiseImage"></div>
+        <div id="listCruiseData"></div>
+        </div>
         <h3 id="cruise_list"></h3>
         <img id="cruise_img" src="" style="height:250px;width:250px;"></img>
        
