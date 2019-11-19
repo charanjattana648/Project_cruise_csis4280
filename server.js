@@ -60,5 +60,12 @@ app.post("/activitiesList",function(req, res) {
 app.post("/diningList",function(req, res) {
     mongodb.getDiningList(req,res);
 })
-
-
+app.post("/routeDetails",function(req, res) {
+    mongodb.getRouteDetailsList(req,res);
+})
+app.post("/cabins",function(req, res) {
+    mongodb.getCabinsList(req,res);
+})
+app.post("/decks",function(req, res) {
+    mongodb.getdeckList(req,res);
+})
