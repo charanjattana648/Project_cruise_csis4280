@@ -122,27 +122,30 @@ function filterNames(req,res)
         var arr=[];
         if(req.body.cruiseName!=undefined && req.body.cruiseName!="")
         {
+            query['CruiseName']=req.body.cruiseName;
             arr["CruiseName"]=req.body.cruiseName;
         }
          if(req.body.cruiseDestination!=undefined && req.body.cruiseDestination!="")
         {
+             query['Sails_to']=req.body.cruiseDestination;
             arr["Sails_to"]=req.body.cruiseDestination;
         }
          if(req.body.numOfDays!=undefined && req.body.numOfDays!="")
         {
-            arr["Num_Days"]=req.body.numOfDays;
+             query['Num_Days']=parseInt(req.body.numOfDays);
+            arr["Num_Days"]=parseInt(req.body.numOfDays);
         }
         
         arr.forEach((v,k)=>{
             console.log(k+" --- "+v);
         })
+        console.log(JSON.stringify(query));
         collection.find(query,{projection:{CruiseName:1,_id:0}}).toArray((err,result)=>{
             if(err) throw err;
             console.log("result : "+JSON.stringify(result));
             var filter_result=filterArray(result,"CruiseName");
             console.log("res : "+filter_result);
             res.send("FilteredNames @:"+filter_result);
-            
         })
         
         
@@ -261,9 +264,7 @@ function getRouteDetails(req,res)
       
     })
 }
-
-
-function getDecks(req,res)
+function getdeck(req,res)
 {
     mongoClient.connect(url,{useNewUrlParser:true},function(err, db) {
        //       CruiseName Cabins Deck
@@ -274,9 +275,9 @@ function getDecks(req,res)
         //var query={};
         collection.find(query,{projection:{Deck:1,_id:0}}).toArray((err,result)=>{
             if(err) throw err;
-            var result_deck=filterArray(result,"Deck");
-            console.log("result is "+result_deck)
-	        res.send("Decks@:"+result_deck);
+              var data= filterArray(result,"Deck")
+            console.log("result is "+JSON.stringify(result))
+	        res.send("Decks@:"+data);
         })
       
     })
@@ -291,7 +292,5 @@ exports.getFilteredNames=filterNames;
 exports.getDiningList=getDining;
 exports.getActivitiesList=getActivities;
 exports.getEntertainmentList=getEntertainment;
-exports.getRouteDetailsList=getRouteDetails;
-exports.getCabinsList=getCabins;
-exports.getdeckList=getDecks;
+exports.getdeckList=getdeck;
 
