@@ -225,25 +225,62 @@ function getDining(req,res)
       
     })
 }
-
-// function getDining(req,res)
-// {
-//     mongoClient.connect(url,{useNewUrlParser:true},function(err, db) {
-//       //       CruiseName  Activities Entertainment  Dining
-//         if(err) throw err;
-//         var dbo=db.db("CruiseDataDB");
-//         var collection=dbo.collection("Activity");
-//         var query={CruiseName:req.body.cruiseName};
-//         collection.find(query,{projection:{Entertainment:1,_id:0}}).toArray((err,result)=>{
-//             if(err) throw err;
-// 	        console.log(result);
-	        
-// 	        res.send(JSON.stringify(result));
-	        
-//         })
+function getCabins(req,res)
+{
+    mongoClient.connect(url,{useNewUrlParser:true},function(err, db) {
+       //       CruiseName Cabins Deck
+        if(err) throw err;
+        var dbo=db.db("CruiseDataDB");
+        var collection=dbo.collection("Trips");
+        var query={CruiseName:req.body.cruiseName};
+        //var query={};
+        collection.find(query,{projection:{Cabins:1,_id:0}}).toArray((err,result)=>{
+            if(err) throw err;
+            console.log("result is "+JSON.stringify(result))
+	        res.send("Cabins@:"+JSON.stringify(result));
+        })
       
-//     })
-// }
+    })
+}
+
+function getRouteDetails(req,res)
+{
+    mongoClient.connect(url,{useNewUrlParser:true},function(err, db) {
+//PackageName CruiseName DeptDate Num_Days Departs_from  Sails_to RouteMap
+        if(err) throw err;
+        var dbo=db.db("CruiseDataDB");
+        var collection=dbo.collection("Packages");
+        var query={CruiseName:req.body.cruiseName};
+        collection.find(query,{projection:{CruiseName:1,PackageName:1,DeptDate:1,Num_Days:1,Departs_from:1,RouteMap:1,Sails_to:1,_id:0}}).toArray((err,result)=>{
+            if(err) throw err;
+	        console.log(result);
+	        
+	        res.send("RouteDetails@:"+JSON.stringify(result));
+	        
+        })
+      
+    })
+}
+
+
+function getDecks(req,res)
+{
+    mongoClient.connect(url,{useNewUrlParser:true},function(err, db) {
+       //       CruiseName Cabins Deck
+        if(err) throw err;
+        var dbo=db.db("CruiseDataDB");
+        var collection=dbo.collection("Trips");
+        var query={CruiseName:req.body.cruiseName};
+        //var query={};
+        collection.find(query,{projection:{Deck:1,_id:0}}).toArray((err,result)=>{
+            if(err) throw err;
+            var result_deck=filterArray(result,"Deck");
+            console.log("result is "+result_deck)
+	        res.send("Decks@:"+result_deck);
+        })
+      
+    })
+}
 
 
 exports.getDaysList=getDays;
@@ -254,3 +291,7 @@ exports.getFilteredNames=filterNames;
 exports.getDiningList=getDining;
 exports.getActivitiesList=getActivities;
 exports.getEntertainmentList=getEntertainment;
+exports.getRouteDetailsList=getRouteDetails;
+exports.getCabinsList=getCabins;
+exports.getdeckList=getDecks;
+
