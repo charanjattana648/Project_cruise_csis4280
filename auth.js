@@ -4,7 +4,7 @@ function createConnection()
 {
     var connection=mysql.createPool({
         connectionLimit:5,
-        host:'ec2-54-174-220-43.compute-1.amazonaws.com',
+        host:'ec2-54-226-71-91.compute-1.amazonaws.com',
         
         user:"myuser",
         password:"pass123",
