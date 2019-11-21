@@ -44,9 +44,13 @@ function getDestinations(req,res)
         var collection=dbo.collection("Packages");
         //var query={CompanyName:req.body.cruiseName,Sails_to:req.body.cruiseDestination,Num_Days:req.body.numOfDays};
         var query={};
-        if(req.body.cruiseName!="")
+         if(req.body.cruiseName!=undefined && req.body.cruiseName!="")
         {
-          query={CruiseName:req.body.cruiseName};
+           query['CruiseName']=req.body.cruiseName;
+        }
+          if(req.body.packageName!=undefined && req.body.packageName!="")
+        {
+          query['PackageName']=req.body.packageName;
         }
         collection.find(query,{projection:{Sails_to:1,_id:0}}).toArray((err,result)=>
         {
@@ -54,7 +58,7 @@ function getDestinations(req,res)
              console.log(result);
              var data= filterArray(result,"Sails_to")
              console.log("filtered data : "+data.toString());
-             res.send("DestinationsList @:"+data.toString());
+             res.send("DestinationsList@:"+data.toString());
              db.close();
                     
         })
@@ -93,9 +97,13 @@ function getDays(req,res)
         var collection=dbo.collection("Packages");
         //var query={CompanyName:req.body.cruiseName,Sails_to:req.body.cruiseDestination,Num_Days:req.body.numOfDays};
         var query={};
-        if(req.body.cruiseDestination!="")
+        if(req.body.cruiseDestination!=undefined && req.body.cruiseDestination!="")
         {
-           query={Sails_to:req.body.cruiseDestination};
+           query['Sails_to']=req.body.cruiseDestination;
+        }
+          if(req.body.packageName!=undefined && req.body.packageName!="")
+        {
+          query['PackageName']=req.body.packageName;
         }
         
         collection.find(query,{projection:{Num_Days:1,_id:0}}).toArray((err,result)=>
@@ -104,7 +112,7 @@ function getDays(req,res)
              console.log(result);
              var data= filterArray(result,"Num_Days")
              console.log("filtered data : "+data.toString());
-             res.send("DaysList @:"+data.toString());
+             res.send("DaysList@:"+data.toString());
              db.close();
                     
         })
@@ -283,6 +291,150 @@ function getdeck(req,res)
     })
 }
 
+// db.collection.update({
+//     "entityId": "12"
+// }, {
+//     $push: {
+//     "nameIdentity": {
+//         "fName": "123",
+//         "lName": "456",
+//         "dob": "00",
+//         "address": "789"
+//     }
+//     }
+// })
+
+function addReview(req,res)
+{
+mongoClient.connect(url,{useUnifiedTopology:true}, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("CruiseDataDB");
+  var collection=dbo.collection("CruiseRating");
+  var query = { "CompanyName": req.body.companyName}
+  var updatedata={ $push:{"reviews":{"UserName": req.body.userName,"Rating": Number(req.body.rating),"Comments":req.body.comments}}};
+  
+  collection.updateOne(query,updatedata, function(err, result) {
+    if (err) throw err;
+    console.log("review added");
+    console.log("review : "+result);res.send("ReviewAdded@:Review Added successfuly!!");
+    db.close();
+  });
+
+//   var total=collection.aggregate([
+//       {$match:{}},
+//       {$group: {"Rating":{$sum:"$Rating"}}}
+//       ]);
+     
+      //collection.reviews
+});
+}
+
+function getReview(req,res)
+{
+mongoClient.connect(url,{useNewUrlParser:true}, function(err, db) {
+  if (err) throw err;
+  var dbo=db.db("CruiseDataDB");
+  var collection=db.collection("CruiseRating");
+  var query={};
+  if(req.body.companyName!=undefined && req.body.companyName!="")
+  {
+      query['CompanyName']=req.body.companyName;
+  }
+    collection.find(query,{projection:{CompanyName:1,UserName:1,Rating:1,Comments:1,_id:0}},).toArray((err,result)=>{
+    if (err) throw err;
+    console.log(JSON.stringify(result));
+    res.send("Reviews@:"+result);
+  });
+});
+}
+
+function getRating(req,res)
+{
+mongoClient.connect(url, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("CruiseDataDB");
+  var myobj = { "CompanyName": req.body.companyName, "UserName": req.body.userName,"Rating": req.body.rating,"Comments":req.body.comments};
+  dbo.collection("CruiseRating").insertOne(myobj, function(err, res) {
+    if (err) throw err;
+    console.log("review added");
+    db.close();
+  });
+});
+}
+
+
+function getPackages(req,res)
+{
+    mongoClient.connect(url,{useNewUrlParser:true},function(err,db)
+    {
+        if(err) throw err;
+        var dbo=db.db("CruiseDataDB");
+        var collection=dbo.collection("Packages");
+        //var query={CompanyName:req.body.cruiseName,Sails_to:req.body.cruiseDestination,Num_Days:req.body.numOfDays};
+        var query={};
+        if(req.body.cruiseName!=undefined && req.body.cruiseName!="")
+        {
+          query={CruiseName:req.body.cruiseName};
+        }
+        collection.find(query,{projection:{PackageName:1,_id:0}}).toArray((err,result)=>
+        {
+             if (err) throw err;
+             console.log(result);
+             var data= filterArray(result,"PackageName")
+             console.log("filtered data : "+data.toString());
+             res.send("PackagesList@:"+data.toString());
+             db.close();
+                    
+        })
+        
+    })
+}
+
+function bookTickets(req,res)
+{
+    
+mongoClient.connect(url,{useUnifiedTopology:true}, function(err, db) {
+  if (err) throw err;
+  var dbo = db.db("CruiseDataDB");
+  var collection=dbo.collection("Booking");
+  var query = { "PackageName": req.body.packageName}
+  //,"bookRooms":{ $elemMatch:{"roomNumber":{$ne:Number(req.body.roomNumber)}}}}
+  var updatedata={ $push:{"bookRooms":{"roomNumber":req.body.roomNumber,"UserName": req.body.userName,"numPeople": Number(req.body.numPeople),"cabinType":req.body.cabinType,
+  "totalPrice":req.body.totalPrice}}};
+  collection.updateOne(query,updatedata, function(err, result) {
+    if (err) throw err;
+    console.log("review added");
+    console.log("review : "+result);
+    res.send("SeatsBooked@:Booking successfuly!!");
+    db.close();
+  });
+});
+}
+
+
+function checkRoom(req,res)
+{
+      mongoClient.connect(url,{useNewUrlParser:true},function(err,db)
+    {
+        if(err) throw err;
+        var dbo=db.db("CruiseDataDB");
+        var collection=dbo.collection("Booking");
+        var query={ "PackageName":req.body.packageName,"bookRooms":{ $elemMatch:{"roomNumber":Number(req.body.roomNumber)}}}
+        console.log(query);
+  
+   collection.find(query,{projection:{PackageName:1,bookRooms:1,roomNumber:1,_id:0}}).count(function (err, count)
+        {
+             if (err) throw err;
+           console.log("count : "+count);
+             db.close();
+             res.send("checkRoomResult@:"+count);
+        });
+    });
+    
+}
+
+
+
 
 exports.getDaysList=getDays;
 exports.getDestinationsList=getDestinations;
@@ -293,4 +445,10 @@ exports.getDiningList=getDining;
 exports.getActivitiesList=getActivities;
 exports.getEntertainmentList=getEntertainment;
 exports.getdeckList=getdeck;
+exports.getRouteDetailsList=getRouteDetails;
+exports.getCabinsList=getCabins;
+exports.getPackageList=getPackages;
+exports.addNewReview=addReview;
+exports.checkRoom=checkRoom;
+exports.bookTickets=bookTickets;
 
