@@ -69,3 +69,15 @@ app.post("/cabins",function(req, res) {
 app.post("/decks",function(req, res) {
     mongodb.getdeckList(req,res);
 })
+app.post("/addreview",function(req, res) {
+    mongodb.addNewReview(req,res);
+})
+app.post("/getPackages",function(req, res) {
+     mongodb.getPackageList(req,res);
+})
+app.post("/bookCruiseTickets",function(req, res) {
+    mongodb.bookTickets(req,res);
+})
+app.post("/checkRoomAval",function(req, res) {
+     mongodb.checkRoom(req,res);
+})
