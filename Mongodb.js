@@ -9,9 +9,10 @@ function getCruiseList(req,res)
         var dbo=db.db("CruiseDataDB");
         var collection=dbo.collection("Cruise");
         var query={};
-        var cruisename_array=(req.body.cruiseName).split(",");
-        if(req.body.cruiseName!="undefined" && req.body.cruiseName!="")
+      
+        if(req.body.cruiseName!=undefined && req.body.cruiseName!="")
         {
+              var cruisename_array=(req.body.cruiseName).split(",");
             query={CruiseName:{$in: cruisename_array}};
         }
         console.log(query);

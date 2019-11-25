@@ -4,7 +4,7 @@ function createConnection()
 {
     var connection=mysql.createPool({
         connectionLimit:5,
-        host:'ec2-54-242-238-95.compute-1.amazonaws.com',
+        host:'ec2-52-205-226-13.compute-1.amazonaws.com',
         
         user:"myuser",
         password:"pass123",
@@ -43,7 +43,8 @@ function login(require,response)
     conn.query(login_query,function(err,rows,fields){
         if(!err)
         {
-            response.send("ok:Login succcessfull!!");
+            console.log("JSon"+JSON.stringify(rows));
+            response.send("ok@:"+JSON.stringify(rows)+"@:Login succcessfull!!");
         }else{
             console.log("Error : "+err);
              response.send("Error:Login failed Please try again ");
